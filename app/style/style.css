@@ -1,0 +1,332 @@
+.loginimg{
+    width: 150px;
+    margin: 0px auto;
+    margin-top: 100px;
+}
+.loginimg img{
+    width: 100%;
+    height: 100%;
+    border-radius: 100px;
+}
+.logininput{
+    width: 260px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+.logininput input{
+    width: 240px;
+    height: 40px;
+    line-height: 50px;
+    border: 1px solid white;
+    box-shadow: 2px 2px 10px #108EE9;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 0 10px;
+}
+.logintext{
+    width: 260px;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+.logintext a{
+    color: #108EE9;
+}
+.loginbutton{
+    width: 260px;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+.loginbutton button{
+    width: 260px;
+    height: 52px;
+    background-color: #108EE9;
+    color: white;
+    border: 1px solid white;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+/*login*/
+
+.forgetInput{
+    margin: 20px 10px;
+}
+.forgetInput a{
+    position: absolute;
+    right: 0;
+    line-height: 14px;
+    font-size: 14px;
+    color: #108EE9;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 6px;
+}
+.forgetInput .am-list-item.am-input-item{
+    height: 60px;
+}
+.forgetInput .am-list-item.am-list-item-middle .am-list-line {
+    border-bottom: 1PX solid #ddd;
+}
+.forgetInput .am-list-item{
+    height: 60px;
+}
+.forgetButton button{
+    width: 88%;
+    margin-left: 6%;
+    height: 52px;
+    background-color: #108EE9;
+    color: white;
+    border: 1px solid white;
+    border-radius: 10px;
+    font-size: 20px;
+    position: absolute;
+    bottom: 30px;
+}
+
+/*forget*/
+
+.indexTabBar{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+.indexTabs{
+    height: calc(100% - 100px);
+}
+.once{
+    width: 90%;
+    margin: 20px auto;
+    height: 200px;
+}
+.oncetitle{
+    font-size: 20px;
+    padding: 5px;
+}
+.oncetext{
+    height: 90px;
+    text-indent: 25px;
+    font-size: 16px;
+    padding: 8px;
+    line-height: 30px;
+    border-bottom: 1px solid #108EE9;
+    margin: 0px 10px 8px 10px;
+}
+.oncedata{
+    margin: 4px auto;
+    height: 60px;
+    text-align: center;
+}
+.oncedatabody{
+    width:calc(25% - 2px);
+    height: 100%;
+    border: 1px solid #ddd;
+    display: inline-block;
+}
+.oncedatabodytop{
+    font-size: 14px;
+    text-align: center;
+    margin-top: 6px;
+}
+.oncedatabodybottom{
+    width: 48px;
+    font-size: 14px;
+    margin: 5px auto;
+    background-color: #108EE9;
+    border-radius: 6px;
+    padding: 4px;
+    text-align: center;
+    color: white;
+}
+/*index*/
+.tabtitle{
+    height: 40px;
+    text-align: center;
+    width: 100%;
+    line-height: 40px;
+    font-size: 15px;
+}
+.tabtitle span{
+    margin:  0 10px;
+}
+.tabpicker{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0 10px;
+}
+.tabpicker .tabmid{
+    width: 36%;
+    flex-wrap: wrap;
+}
+.tabonce{
+    padding-top: 50px;
+}
+.am-list-item .am-list-line .am-list-extra{
+    flex-basis: 0%;
+}
+.rowbody{
+    padding: 6px;
+    border: 1px solid #108EE9;
+    border-radius: 10px;
+    width: calc(100% - 14px);
+    margin-left: 6px;
+    margin-bottom: 20px;
+}
+.rowimg{
+    width: 60px;
+    height: 60px;
+    margin-left: 15px;
+    display: inline-block;
+}
+.rowimg img{
+    height: 100%;
+}
+.rowtext{
+    width: calc(100% - 135px);
+    height: 100%;
+    font-size: 15px;
+    line-height: 30px;
+    padding: 0 8px;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+}
+.rowtext span{
+    margin: 0 2px;
+}
+.rowbutton{
+    width: 60px;
+    height: 100%;
+    line-height: 60px;
+    display: inline-block;
+    vertical-align: top;
+}
+.rowbutton button{
+    width: 48px;
+    font-size: 14px;
+    margin: 5px auto;
+    background-color: #108EE9;
+    border-radius: 6px;
+    padding: 4px;
+    text-align: center;
+    color: white;
+    border: 0;
+}
+.replay{
+    position: relative;
+    left: 24px;
+    top: 16px;
+}
+.replay a{
+    font-size: 14px;
+    margin: 5px auto;
+    background-color: #108EE9;
+    border-radius: 6px;
+    padding: 4px 16px;
+    text-align: center;
+    color: white;
+    border: 0;
+}
+.rowimgdown{
+    height: 60px;
+    width: 30px;
+    line-height: 72px;
+    margin-left: 20px;
+}
+.rowimgdown img{
+    width: 70%;
+}
+.more{
+    position: relative;
+    right: 6%;
+    text-align: right;
+}
+.more button{
+    background-color: #108EE9;
+    border: 0;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+.mored{
+    position: relative;
+    right: 6%;
+    text-align: right;
+}
+.mored button{
+    background-color: #108EE9;
+    border: 0;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+.homeimg{
+    width: 100%;
+    height: 250px;
+}
+.homeimg img{
+    width: 120px;
+    height: 120px;
+    margin-top: 85px;
+    margin-left: calc(50% - 60px);
+    border-radius: 90px;
+}
+.homename{
+    height: 50px;
+    text-align: center;
+    font-size: 22px;
+    line-height: 50px;
+}
+.homemessage{
+    height:240px;
+}
+.homessagenum{
+    height: 70px;
+    font-size: 18px;
+    line-height: 70px;
+    padding: 0 25px;
+}
+.homessagelei{
+    height: 70px;
+    font-size: 18px;
+    line-height: 70px;
+    padding: 0 25px;
+}
+.homessagemodel{
+    height: 70px;
+    font-size: 18px;
+    line-height: 70px;
+    padding: 0 25px;
+}
+.homebutton{
+    height: 100px;
+}
+.homebutton button{
+    border: 0;
+    width: 90%;
+    background-color: red;
+    color: white;
+    height: 40px;
+    margin-top: 50px;
+    margin-left: 5%;
+    border-radius: 10px;
+
+}
+.oncebuytime{
+
+    height: 30px;
+    font-size: 15px;
+    line-height: 30px;
+    text-align: center;
+    background-color: #108EE9;
+    margin: 0px 90px;
+    color: white;
+    border-radius: 5px;
+}
+.am-list-item am-list-item-middle{
+    min-height: 30px;
+    font-size: 15px;
+}
+
+
+

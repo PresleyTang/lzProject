@@ -29,6 +29,11 @@ module.exports = {
                 target: 'http://localhost:8880',//http://www.weather.com.cn
                 secure: false,
                 changeOrigin: true
+            },
+            '/weixin/*': {
+                target: 'https://lezaixy.com',//http://www.weather.com.cn
+                secure: false,
+                changeOrigin: true
             }
         }
     },

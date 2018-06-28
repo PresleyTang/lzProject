@@ -1,7 +1,8 @@
 import React from 'react'
-import { Tabs , Picker ,ListView ,List  } from 'antd-mobile';
+import { Tabs , Picker ,DatePicker ,List  } from 'antd-mobile';
 import {axiosGet} from '../util/axios'
 import { StickyContainer,Sticky } from 'react-sticky';
+import * as data from '../config/dataurl'
 
 let pageIndex = 0;
 
@@ -16,18 +17,8 @@ const tabsmid = [
     { title: '招技能人才' },
     { title: '招就业人才' },
 ];
-const seasons = [
-    [
-        {
-            label: '2013',
-            value: '2013',
-        },
-        {
-            label: '2014',
-            value: '2014',
-        },
-    ],
-];
+
+
 function renderTabBar(props) {
     return (<Sticky>
         {({ style }) => <div style={{ ...style, zIndex: 1 }}><Tabs.DefaultTabBar {...props} /></div>}
@@ -165,7 +156,29 @@ export class ListViewExamplemid extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            data:[],
+            partData:[],       //兼职
+            skillData:[],      //技能
+            employmentData:[], //就业
+            partDataNum:[],       //兼职
+            skillDataNum:[],      //技能
+            employmentDataNum:[], //就业
+            options:{
+                schools:[],
+                referrers:[],
+                certificates:[],
+                educations:[],
+                experiences:[],
+                honors:[],
+                intentionjobs:[],
+                intentionparttimes:[],
+                parttimeaddrs:[],
+                specials:[],
+                specialtys:[],
+                userstates:[],
+                provinces:[],
+                wages:[],
+                worktimes:[],
+            },  //选项
             show: true,
             viewHeight: null,
         }
@@ -173,22 +186,140 @@ export class ListViewExamplemid extends React.Component{
     componentDidMount(){
         var viewHeight = document.documentElement.clientHeight-138.5;
         this.setState({viewHeight:viewHeight});
+        this.getPartData(1,10);
+        this.getSkillData(1,10);
+        this.getEmploymentData(1,10);
+        this.mapOtions();
 
-        axiosGet("/api/user/searchParttime.do"+"?pageNum=1&pageSize=10&schoolld=2",function(result){
-            console.log(result.data.data.list)
-            this.setState({
-                data:result.data.data.list,
-            })
+    }
+    mapOtions =()=>{
+        axiosGet("/weixin/options/getAllOptions.action",function(result){
+            var schools = this.convert(result.data.options.schools);
+            var referrers = this.convert(result.data.options.referrers);
+            var certificates = this.convert(result.data.options.certificates);
+            var educations = this.convert(result.data.options.educations);
+            var experiences = this.convert(result.data.options.experiences);
+            var honors = this.convert(result.data.options.honors);
+            var intentionjobs = this.convert(result.data.options.intentionjobs);
+            var intentionparttimes = this.convert(result.data.options.intentionparttimes);
+            var parttimeaddrs = this.convert(result.data.options.parttimeaddrs);
+            var specials = this.convert(result.data.options.specials);
+            var specialtys = this.convert(result.data.options.specialtys);
+            var userstates = this.convert(result.data.options.userstates);
+            var provinces = this.convertprovinces(result.data.options.provinces);
+            var wages = this.convert(result.data.options.wages);
+            var worktimes = this.convert(result.data.options.worktimes);
+
+            var option = {
+                schools:[schools],
+                referrers:[referrers],
+                certificates:[certificates],
+                educations:[educations],
+                experiences:[experiences],
+                honors:[honors],
+                intentionjobs:[intentionjobs],
+                intentionparttimes:[intentionparttimes],
+                parttimeaddrs:[parttimeaddrs],
+                specials:[specials],
+                specialtys:[specialtys],
+                userstates:[userstates],
+                provinces:[provinces],
+                wages:[wages],
+                worktimes:[worktimes],
+            };
+            this.setState({options:option})
+
         }.bind(this));
-        console.log(this.state.data)
+
     }
 
-    showData = () => {
-        return this.state.data.map(item=>{
+    convert = (rawData) => {
+        const keyPatt = / *(Id)/;
+        const valuePatt = / *(Value)/;
+
+        return rawData.map(item=>{
+            for (var key in item){
+                if (key.match(keyPatt)) {
+                    item['value'] = item[key]+"";
+                }
+                if (key.match(valuePatt)) {
+                    item['label'] = item[key];
+                }
+                delete item[key]
+            }
+            return item;
+        })
+    }
+    convertprovinces = (rawData) => {
+        const keyPatt = / *(id)/;
+        const valuePatt = / *(name)/;
+
+        return rawData.map(item=>{
+            for (var key in item){
+                if (key.match(keyPatt)) {
+                    item['value'] = item[key]+"";
+                }
+                if (key.match(valuePatt)) {
+                    item['label'] = item[key];
+                }
+                delete item[key]
+            }
+            return item;
+        })
+    }
+
+    getPartData = (pageNum,pageSize) =>{
+        axiosGet("/api/user/searchParttime.do"+"?pageNum="+pageNum+"&pageSize="+pageSize,function(result){
+            this.setState({
+                partData:result.data.data.list,
+            })
+        }.bind(this));
+
+
+        axiosGet("/api/user/getCVinfo.do"+"?type=1",function(result){
+            this.setState({
+                partDataNum:result.data.data,
+            })
+        }.bind(this));
+    }
+
+
+    getSkillData = (pageNum,pageSize) =>{
+        axiosGet("/api/user/search.do"+"?pageNum="+pageNum+"&pageSize="+pageSize,function(result){
+            this.setState({
+                skillData:result.data.data.list,
+            })
+        }.bind(this));
+
+
+        axiosGet("/api/user/getCVinfo.do"+"?type=2",function(result){
+            this.setState({
+                skillDataNum:result.data.data,
+            })
+        }.bind(this));
+    }
+
+    getEmploymentData = (pageNum,pageSize) =>{
+        axiosGet("/api/user/search.do"+"?pageNum="+pageNum+"&pageSize="+pageSize,function(result){
+            this.setState({
+                employmentData:result.data.data.list,
+            })
+        }.bind(this));
+
+        axiosGet("/api/user/getCVinfo.do"+"?type=3",function(result){
+            this.setState({
+                employmentDataNum:result.data.data,
+            })
+        }.bind(this));
+
+    }
+
+    showData = (data) => {
+        return data.map(item=>{
             return <div className='rowbody'>
                 <div className='rowimg'><img src='https://static.udaing.com/images/user/DF46EDC86C02484BBC3210D418E0A944.jpg'/></div>
                 <div className='rowtext'>
-                    <div style={{height:'30px'}}>{item.name}{item.sex}</div>
+                    <div style={{height:'30px'}}>{item.name}<span style={{marginLeft:'20px'}}>{item.sex}</span></div>
                     <div style={{height:'30px'}}>{item.school}</div>
                 </div>
 
@@ -213,6 +344,7 @@ export class ListViewExamplemid extends React.Component{
 
 
     render(){
+        console.log(this.state,"2123")
         return (
             <div>
                 <div className='indexTabs'>
@@ -223,16 +355,16 @@ export class ListViewExamplemid extends React.Component{
                         >
                             <div style={{height: this.state.viewHeight, backgroundColor: '#fff'}}>
                                 <div className='tabtitle'>
-                                    <span>已购简历(20)</span>
-                                    <span>已下载简历(10)</span>
-                                    <span>剩余简历(10)</span>
+                                    <span>已购简历({this.state.partDataNum.已购简历})</span>
+                                    <span>已下载简历({this.state.partDataNum.已下载简历})</span>
+                                    <span>剩余简历({this.state.partDataNum.剩余简历})</span>
                                     <div className='more'style={this.state.show?{right:'40%'}:null}><button onClick={this.changerShow}>筛选条件</button></div>
-                                    <div className='more'style={this.state.show?{display:'none'}:null}><button>重置</button></div>
+                                    <div className='more'style={this.state.show?{display:'none'}:null}><button>搜索</button></div>
                                 </div>
                                 <div className='tabpicker' style={this.state.show?{display:'none'}:null}>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.schools}
                                             title="学校"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -244,7 +376,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.intentionparttimes}
                                             title="意向兼职"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -256,7 +388,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.parttimeaddrs}
                                             title="兼职地点"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -268,7 +400,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.worktimes}
                                             title="兼职时间"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -279,22 +411,22 @@ export class ListViewExamplemid extends React.Component{
                                         </Picker>
                                     </div>
                                 </div>
-                                <div className='tabonce'>
-                                    <div>{this.showData()}</div>
+                                <div className='tabonce' style={this.state.show?null:{paddingTop:'0'}}>
+                                    <div>{this.showData(this.state.partData)}</div>
                                 </div>
                             </div>
                             <div style={{justifyContent: 'center', height: this.state.viewHeight, backgroundColor: '#fff',flexWrap: 'wrap',flexDirection: 'row'}}>
                                 <div className='tabtitle'>
-                                    <span>已购简历(20)</span>
-                                    <span>已下载简历(10)</span>
-                                    <span>剩余简历(10)</span>
+                                    <span>已购简历({this.state.skillDataNum.已购简历})</span>
+                                    <span>已下载简历({this.state.skillDataNum.已下载简历})</span>
+                                    <span>剩余简历({this.state.skillDataNum.剩余简历})</span>
                                     <div className='more'style={this.state.show?{right:'40%'}:null}><button onClick={this.changerShow}>筛选条件</button></div>
-                                    <div className='more'style={this.state.show?{display:'none'}:null}><button>重置</button></div>
+                                    <div className='more'style={this.state.show?{display:'none'}:null}><button>搜索</button></div>
                                 </div>
                                 <div className='tabpicker' style={this.state.show?{display:'none'}:null}>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.schools}
                                             title="学校"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -306,7 +438,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.provinces}
                                             title="籍贯"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -318,7 +450,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.educations}
                                             title="学历"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -330,7 +462,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.specials}
                                             title="专业"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -342,7 +474,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid'>
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.specialtys}
                                             title="特长"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -353,23 +485,23 @@ export class ListViewExamplemid extends React.Component{
                                         </Picker>
                                     </div>
                                 </div>
-                                <div className='tabonce'>
-                                    <div>{this.showData()}</div>
+                                <div className='tabonce' style={this.state.show?null:{paddingTop:'0'}}>
+                                    <div>{this.showData(this.state.skillData)}</div>
                                 </div>
 
                             </div>
                             <div style={{justifyContent: 'center', height: this.state.viewHeight, backgroundColor: '#fff',flexWrap: 'wrap',flexDirection: 'row'}}>
                                 <div className='tabtitle'>
-                                    <span>已购简历(20)</span>
-                                    <span>已下载简历(10)</span>
-                                    <span>剩余简历(10)</span>
+                                    <span>已购简历({this.state.employmentDataNum.已购简历})</span>
+                                    <span>已下载简历({this.state.employmentDataNum.已下载简历})</span>
+                                    <span>剩余简历({this.state.employmentDataNum.剩余简历})</span>
                                     <div className='more'style={this.state.show?{right:'40%'}:null}><button onClick={this.changerShow}>筛选条件</button></div>
-                                    <div className='more'style={this.state.show?{display:'none'}:null}><button>重置</button></div>
+                                    <div className='more'style={this.state.show?{display:'none'}:null}><button>搜索</button></div>
                                 </div>
                                 <div className='tabpicker' style={this.state.show?{display:'none'}:null}>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.schools}
                                             title="学校"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -381,7 +513,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.provinces}
                                             title="籍贯"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -393,7 +525,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.educations}
                                             title="学历"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -405,7 +537,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.specials}
                                             title="专业"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -417,7 +549,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.certificates}
                                             title="证书"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -429,7 +561,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.honors}
                                             title="荣誉"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -440,20 +572,32 @@ export class ListViewExamplemid extends React.Component{
                                         </Picker>
                                     </div>
                                     <div className='tabmid' >
-                                        <Picker
-                                            data={seasons}
+                                        <DatePicker
+                                            mode="date"
                                             title="毕业时间"
-                                            cascade={false}
-                                            value={this.state.sValue}
-                                            onChange={v => this.setState({ sValue: v })}
-                                            onOk={v => this.setState({ sValue: v })}
+                                            extra="Optional"
+                                            value={this.state.date}
+                                            onChange={date => this.setState({ date })}
                                         >
-                                            <List.Item arrow="down">毕业时间</List.Item>
-                                        </Picker>
+                                            <List.Item arrow="down">毕业时间-起</List.Item>
+                                        </DatePicker>
+
+                                    </div>
+                                    <div className='tabmid' >
+                                        <DatePicker
+                                            mode="date"
+                                            title="毕业时间"
+                                            extra="Optional"
+                                            value={this.state.date}
+                                            onChange={date => this.setState({ date })}
+                                        >
+                                            <List.Item arrow="down">毕业时间-终</List.Item>
+                                        </DatePicker>
+
                                     </div>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.experiences}
                                             title="工作经验"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -465,7 +609,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.provinces}
                                             title="意向城市"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -477,7 +621,7 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                     <div className='tabmid' >
                                         <Picker
-                                            data={seasons}
+                                            data={this.state.options.intentionjobs}
                                             title="意向岗位"
                                             cascade={false}
                                             value={this.state.sValue}
@@ -488,8 +632,8 @@ export class ListViewExamplemid extends React.Component{
                                         </Picker>
                                     </div>
                                 </div>
-                                <div className='tabonce'>
-                                    <div>{this.showData()}</div>
+                                <div className='tabonce' style={this.state.show?null:{paddingTop:'0'}}>
+                                    <div>{this.showData(this.state.employmentData)}</div>
                                 </div>
 
                             </div>
@@ -517,25 +661,9 @@ export class ListViewExamplemhome extends React.Component{
     componentDidMount(){
         var viewHeight = document.documentElement.clientHeight-95;
         this.setState({viewHeight:viewHeight});
-        setTimeout(() => {
-            this.setState({
-                show:true,
-            });
-        }, 600);
+
     }
 
-    changerShow = () =>{
-        if(this.state.show){
-            this.setState({
-                show:false,
-            })
-        }
-        else {
-            this.setState({
-                show:true,
-            })
-        }
-    }
 
     render(){
         return (
@@ -551,6 +679,9 @@ export class ListViewExamplemhome extends React.Component{
                     </div>
                     <div className='homessagemodel'>
                         企业规模<span style={{float:'right'}}>20-30人</span>
+                    </div>
+                    <div className='homessagemodel'>
+                        我的消息<span style={{float:'right'}}><img src='http://udaing-static.oss-cn-beijing.aliyuncs.com/tjmimg/more.png'/></span>
                     </div>
                 </div>
                 <div className='homebutton'><button>退出登录</button></div>

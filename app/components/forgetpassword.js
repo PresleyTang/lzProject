@@ -17,8 +17,8 @@ export default class Forgetpassword extends React.Component{
                     icon={<Icon type="left"/>}
                     onLeftClick={() =>
                         setTimeout(()=>{
-                        window.location.href='/login';
-                    },200)}
+                    window.location.href='/login';
+                },200)}
                 >忘记密码</NavBar>
                 </div>
                 <div className='forgetInput'>

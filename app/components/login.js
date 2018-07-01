@@ -1,6 +1,6 @@
 import React from 'react'
-import {Toast} from 'antd-mobile';
-import {axiosPost} from '../util/axios'
+import {Toast,Button} from 'antd-mobile';
+import {axiosGet, axiosPost} from '../util/axios'
 export default class Login extends React.Component{
 
     constructor(props){
@@ -10,10 +10,8 @@ export default class Login extends React.Component{
             password:null,
         }
     };
-    componentDidMount(){
 
 
-    }
     getIndex = () =>{
         var data={
             phone:this.state.phone,
@@ -23,8 +21,8 @@ export default class Login extends React.Component{
             Toast.fail("输入不能为空！",2)
         }
         else{
-        axiosPost("/api/user/login.do",data,function(result){
-            console.log(result);
+        axiosPost("/company/api/user/login.do",data,function(result){
+            //console.log(result);
             if(result.data.status == 0){
                 Toast.success(result.data.msg,2);
             }
@@ -73,11 +71,12 @@ export default class Login extends React.Component{
     render(){
         return (
             <div>
-            <div className='loginimg'><img src="https://static.udaing.com/images/user/DF46EDC86C02484BBC3210D418E0A944.jpg"/></div>
+            <div className='loginimg'><img src="https://www.lezaixy.com/images/company/1.png"/></div>
             <div className='logininput'><input placeholder={"请输入账号"} onChange={this.changePhone}/></div>
             <div className='logininput' style={{marginTop:'20px'}}><input placeholder={"请输入密码"}onChange={this.changePassword} type='password'/></div>
             <div className='logintext'><a onClick={this.getForgetpassword}>忘记密码</a><a style={{float:'right'}} onClick={this.getRegistered}>新用户注册</a></div>
-            <div className='loginbutton' onClick={this.getIndex}><button>登录</button></div>
+            <div className='loginbutton' onClick={this.getIndex}><Button type="primary">登录</Button></div>
+                <div style={{width:'40%',textAlign:'center',margin:'70px 30% 10px 30%',color:'#8888',fontSize:'14px'}}>冀ICP备18016843</div>
             </div>
         );
     }

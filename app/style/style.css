@@ -54,6 +54,7 @@
 .forgetInput a{
     position: absolute;
     right: 0;
+    bottom: 15px;
     line-height: 14px;
     font-size: 14px;
     color: #108EE9;
@@ -70,17 +71,13 @@
 .forgetInput .am-list-item{
     height: 60px;
 }
-.forgetButton button{
-    width: 88%;
-    margin-left: 6%;
-    height: 52px;
-    background-color: #108EE9;
-    color: white;
-    border: 1px solid white;
-    border-radius: 10px;
-    font-size: 20px;
-    position: absolute;
-    bottom: 30px;
+.forgetInput .am-list-item.am-list-item-middle .am-list-line{
+    border: 0;
+}
+.forgetButton{
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 20px;
 }
 
 /*forget*/
@@ -128,14 +125,7 @@
     margin-top: 6px;
 }
 .oncedatabodybottom{
-    width: 48px;
-    font-size: 14px;
-    margin: 5px auto;
-    background-color: #108EE9;
-    border-radius: 6px;
-    padding: 4px;
-    text-align: center;
-    color: white;
+    margin-top: 2px;
 }
 /*index*/
 .tabtitle{
@@ -172,6 +162,8 @@
     box-shadow: 2px 3px 10px #78cdd1;
 }
 .rowimg{
+    margin-top: 10px;
+    text-align: center;
     width: 60px;
     height: 60px;
     margin-left: 15px;
@@ -183,9 +175,9 @@
 }
 .rowtext{
     width: calc(100% - 135px);
-    height: 100%;
+    height: 80px;
     font-size: 15px;
-    line-height: 30px;
+    line-height: 40px;
     padding: 0 8px;
     display: inline-block;
     vertical-align: top;
@@ -248,18 +240,6 @@
     padding: 5px;
     border-radius: 5px;
 }
-.mored{
-    position: relative;
-    right: 6%;
-    text-align: right;
-}
-.mored button{
-    background-color: #108EE9;
-    border: 0;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-}
 .homebody{
     overflow: scroll;
 }
@@ -304,16 +284,16 @@
 .homessagemodel img{
     width: 20px;
 }
-.homebutton button{
-    border: 0;
-    width: 90%;
-    background-color: red;
-    color: white;
-    height: 40px;
-    margin-top: 20px;
-    margin-left: 5%;
-    border-radius: 10px;
+.homebutton{
+    width: 80%;
+    margin: 10px auto;
 
+}
+.am-button-small{
+    padding: 0 5px;
+}
+.am-list-item .am-input-label.am-input-label-5{
+    font-size: 14px;
 }
 .oncebuytime{
 
@@ -342,5 +322,79 @@
     padding-right: 0px;
 }
 
+.forgetInput{
+
+}
+.forgettop{
+    box-shadow: 2px 2px 10px #108EE9;
+    border-radius: 10px;
+
+}
+.forgettopleft{
+    display: inline-block;
+    width: 110px;
+    height: 110px;
+
+ }
+.forgettopleft img{
+    width: 100%;
+}
+.forgettopright{
+    display: inline-block;
+    width: calc(100% - 130px);
+    vertical-align: top;
+    line-height: 30px;
+    font-size: 16px;
+    padding: 0 10px;
+}
+.forgettoponce{
 
 
+}
+.forgettoponceleft{
+    display: inline-block;
+    width: 80px;
+
+}
+.forgettoponceright{
+    display: inline-block;
+    width: calc(100% - 80px);
+    vertical-align: top;
+    line-height: 30px;
+
+}
+.forgetonces{
+    display: inline-block;
+    width: 33%;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+}
+.forgettoplefttime{
+    padding: 10px;
+    text-align: center;
+    font-size: 20px;
+}
+.forgettoprighttime{
+    padding: 10px;
+}
+.timeonce{
+    margin: 4px 0;
+
+}
+.timeleft{
+
+    display: inline-block;
+    width: 80px;
+    font-size: 16px;
+    height: 22px;
+    line-height: 22px;
+}
+.timeright{
+    display: inline-block;
+    width: calc(100% - 80px);
+    text-align: right;
+    font-size: 16px;
+    height: 22px;
+    line-height: 22px;
+}

@@ -3,34 +3,11 @@ var webpack = require('webpack');
 const theme = require('./package.json').theme;
 
 module.exports = {
-    entry: ['webpack/hot/dev-server', path.resolve(__dirname, './app/main.js')],
+    entry: [path.resolve(__dirname, './app/main.js')],
     output: {
-        path: path.resolve(__dirname, './build'),
+        path: path.resolve(__dirname, './dist'),
         filename: 'bundle.js',
         publicPath: '/'
-    },
-    mode: 'development',
-    devServer: {
-        inline: true,
-        port: 8080,
-        historyApiFallback: true,
-        proxy: {
-            '/api/user/*': {
-                target: 'http://localhost:8880',//http://www.weather.com.cn
-                secure: false,
-                changeOrigin: true
-            },
-            '/api/package/*': {
-                target: 'http://localhost:8880',//http://www.weather.com.cn
-                secure: false,
-                changeOrigin: true
-            },
-            '/api/get/*': {
-                target: 'http://localhost:8880',//http://www.weather.com.cn
-                secure: false,
-                changeOrigin: true
-            },
-        }
     },
     module: {
         rules: [
@@ -58,6 +35,12 @@ module.exports = {
     },
 
     plugins: [
+        //移除打包后的警告
+        new webpack.DefinePlugin({
+            "process.env": {
+                NODE_ENV: JSON.stringify("production")
+            }
+        }),
         new webpack.HotModuleReplacementPlugin()
     ]
 };

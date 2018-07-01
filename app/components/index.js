@@ -7,25 +7,25 @@ export default class Index extends React.Component{
 
     constructor(props){
         super(props);
+        var selectedTab = "blueTab"
+        var path = props.location.pathname;
+        if(path.indexOf("/search")==0){
+            selectedTab='greenTab';
+        }else if(path.indexOf("/home")==0){
+            selectedTab='yellowTab';
+        }
         this.state={
             fullScreen: false,
-            selectedTab: 'redTab',
+            selectedTab: selectedTab,
             hidden: false,
             viewHeight:null,
         }
-        const getSectionData = (dataBlob, sectionID) => dataBlob[sectionID];
-        const getRowData = (dataBlob, sectionID, rowID) => dataBlob[rowID];
-        const dataSource = new ListView.DataSource({
-            getRowData,
-            getSectionHeaderData: getSectionData,
-            rowHasChanged: (row1, row2) => row1 !== row2,
-            sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
-        });
-        this.state = {
-            dataSource,
-            isLoading: true,
-        };
     };
+
+    componentDidMount(){
+        window.global_var  = 'demo'
+    }
+
     render(){
         return (
             <div>
@@ -61,6 +61,7 @@ export default class Index extends React.Component{
                             this.setState({
                                 selectedTab: 'blueTab',
                             });
+                            this.props.history.push("/index");
                         }}
                         data-seed="logId"
                     >
@@ -89,9 +90,10 @@ export default class Index extends React.Component{
                             this.setState({
                                 selectedTab: 'greenTab',
                             });
+                            this.props.history.push("/search");
                         }}
                     >
-                        <ListViewExamplemid/>
+                        <ListViewExamplemid Id={this.props.match.params.id}/>
                     </TabBar.Item>
                     <TabBar.Item
                         icon={{ uri: 'http://udaing-static.oss-cn-beijing.aliyuncs.com/tjmimg/home.png' }}
@@ -103,6 +105,7 @@ export default class Index extends React.Component{
                             this.setState({
                                 selectedTab: 'yellowTab',
                             });
+                            this.props.history.push("/home");
                         }}
                     >
                         <ListViewExamplemhome/>

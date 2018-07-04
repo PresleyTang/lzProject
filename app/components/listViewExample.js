@@ -1,6 +1,7 @@
 import React from 'react'
-import { Tabs , Picker ,DatePicker ,List ,Toast ,Modal,Button} from 'antd-mobile';
-import {axiosGet} from '../util/axios'
+import { Tabs , Picker ,DatePicker ,List ,Toast ,Modal,Button,PullToRefresh} from 'antd-mobile';
+import {Upload,Icon} from 'antd';
+import {axiosGet,axiosPost} from '../util/axios'
 import { StickyContainer,Sticky } from 'react-sticky';
 import * as data from '../config/dataurl'
 
@@ -16,8 +17,6 @@ const tabsmid = [
     { title: '招就业人才' },
 ];
 
-
-
 function renderTabBar(props) {
     return (<Sticky>
         {({ style }) => <div style={{ ...style, zIndex: 1 }}><Tabs.DefaultTabBar {...props} /></div>}
@@ -32,20 +31,27 @@ export class ListViewExample extends React.Component{
             packageHistory: [],
         }
     }
+
     componentDidMount(){
-        var viewHeight = document.documentElement.clientHeight-138.5;
+        var viewHeight = document.documentElement.clientHeight-93.5;
         this.setState({viewHeight:viewHeight});
-        axiosGet("/company/api/package/get.do"+"?pageNum=1&pageSize=10",function(result){
+        axiosGet(data.Get+"?pageNum=1&pageSize=10",function(result){
+            if(result.data.status==10){
+                Toast.fail("您未登录,请先登录",2)
+                window.location.href='/login';
+            }
             this.setState({
                 packageHistory:result.data.data.list,
             })
-        }.bind(this));
+        }.bind(this),);
         //var root=document.getElementsByClassName("am-list sticky-list am-list-view-scrollview")[0];
         //root.style.cssText="height:"+viewHeight+"px";
     }
 
     getData = () =>{
-        var i=0;
+        if(this.state.packageHistory.length==0){
+            return <div style={{width:'80%',margin:'30px auto',textAlign:'center'}}>您没有购买记录！</div>
+        }
         return  this.state.packageHistory.map(item=>{
             return <div style={{marginTop:'14px'}}>
                 <div className='oncebuytime'>{item.buytime}</div>
@@ -53,6 +59,7 @@ export class ListViewExample extends React.Component{
             </div>
         })
     }
+
     buy=(event)=>{
         var type = event.currentTarget.getAttribute('data-type');
         var total = event.currentTarget.getAttribute('data-total');
@@ -70,13 +77,10 @@ export class ListViewExample extends React.Component{
         else{
 
         }
-        console.log(type)
-        console.log(total)
-        console.log(money)
         const alertInstance = alert('确认', '您要购买的是'+typeName+'\r\n共:'+total+"份"+'\r\n共:'+money+"元", [
             {text: '取消', onPress: () => console.log('cancel'), style: 'default'},
             {text: '确认', onPress: () => {
-                    window.location.href="/company/api/package/buy.do"+"?type="+type+"&total="+total+"&money="+money
+                    window.location.href=data.Buy+"?type="+type+"&total="+total+"&money="+money
                 }},
         ]);
 
@@ -183,6 +187,7 @@ export class ListViewExamplemid extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            sinage:true,
             partData:[],       //兼职
             skillData:[],      //技能
             employmentData:[], //就业
@@ -209,26 +214,38 @@ export class ListViewExamplemid extends React.Component{
             index: 0,
             getindex: 1,
             viewHeight: null,
-            viewHeight: null,
+            PartDatapageNum:1,
+            PartDatapageSize:10,
+            searchPartData:false,
+            SkillDatapageNum:1,
+            SkillDatapageSize:10,
+            searchSkillData:false,
+            EmploymentDatapageNum:1,
+            EmploymentDatapageSize:10,
+            searchEmploymentData:false
         }
     }
 
     componentDidMount(){
-        var viewHeight = document.documentElement.clientHeight-138.5;
-        this.setState({viewHeight:viewHeight});
-        this.getPartData(1,10);
-        this.getSkillData(1,10);
-        this.getEmploymentData(1,10);
+        var viewHeight = document.documentElement.clientHeight-93.5;
+        var Height = document.documentElement.clientHeight;
+        if(this.state.sinage){
+            this.getPartData(1,10);
+            this.getSkillData(1,10);
+            this.getEmploymentData(1,10);
+        }
         this.mapOtions();
-        console.log(this.props.name)
         this.setState({
-             index:this.props.Id-1,
+            viewHeight:viewHeight,
+            index:this.props.Id-1,
+            getindex:this.props.Id,
+            sinage:false
         })
 
     }
 
     mapOtions =()=>{
-        axiosGet("/company/api/get/all.do",function(result){
+        axiosGet(data.All,function(result){
             var certificates = this.convert(result.data.certificates);
             var educations = this.convert(result.data.educations);
             var experiences = this.convert(result.data.experiences);
@@ -300,56 +317,85 @@ export class ListViewExamplemid extends React.Component{
         })
     }
 
-    getPartData = (pageNum,pageSize) =>{
-        axiosGet("/company/api/user/searchParttime.do"+"?pageNum="+pageNum+"&pageSize="+pageSize,function(result){
+    getPartData = () =>{
+        axiosGet(data.SearchParttime+"?pageNum="+this.state.PartDatapageNum+"&pageSize="+this.state.PartDatapageSize,function(result){
             if(result.data.status==10){
                 Toast.fail("您未登录,请先登录",2)
                 window.location.href='/login';
             }
-            this.setState({
-                partData:result.data.data.list,
-            })
+            if(this.state.pageNum>1){
+                var nextData = result.data.data.list;
+                var finshData = this.state.partData.concat(nextData)
+                this.setState({
+                    partData:finshData,
+                })
+            }
+            else{
+                this.setState({
+                    partData:result.data.data.list,
+                })
+            }
+
         }.bind(this));
 
 
-        axiosGet("/company/api/user/getCVinfo.do"+"?type=1",function(result){
+        axiosGet(data.GetCVinfo+"?type=1",function(result){
             this.setState({
                 partDataNum:result.data.data,
             })
         }.bind(this));
     }
 
-    getSkillData = (pageNum,pageSize) =>{
-        axiosGet("/company/api/user/search.do"+"?pageNum="+pageNum+"&pageSize="+pageSize+"&type=2",function(result){
+    getSkillData = () =>{
+        axiosGet(data.Search+"?pageNum="+this.state.SkillDatapageNum+"&pageSize="+this.state.SkillDatapageSize+"&type=2",function(result){
             if(result.data.status==10){
                 Toast.fail("您未登录,请先登录",2)
                 window.location.href='/login';
             }
-            this.setState({
-                skillData:result.data.data.list,
-            })
+            if(this.state.SkillDatapageNum>1){
+                var nextData = result.data.data.list;
+                var finshData = this.state.skillData.concat(nextData)
+                this.setState({
+                    skillData:finshData,
+                })
+            }
+            else{
+                this.setState({
+                    skillData:result.data.data.list,
+                })
+            }
+
         }.bind(this));
 
 
-        axiosGet("/company/api/user/getCVinfo.do"+"?type=2",function(result){
+        axiosGet(data.GetCVinfo+"?type=2",function(result){
             this.setState({
                 skillDataNum:result.data.data,
             })
         }.bind(this));
     }
 
-    getEmploymentData = (pageNum,pageSize) =>{
-        axiosGet("/company/api/user/search.do"+"?pageNum="+pageNum+"&pageSize="+pageSize+"&type=3",function(result){
+    getEmploymentData = () =>{
+        axiosGet(data.Search+"?pageNum="+this.state.EmploymentDatapageNum+"&pageSize="+this.state.EmploymentDatapageSize+"&type=3",function(result){
             if(result.data.status==10){
                 Toast.fail("您未登录,请先登录",2)
                 window.location.href='/login';
             }
-            this.setState({
-                employmentData:result.data.data.list,
-            })
+            if(this.state.EmploymentDatapageNum>1){
+                var nextData = result.data.data.list;
+                var finshData = this.state.employmentData.concat(nextData)
+                this.setState({
+                    employmentData:finshData,
+                })
+            }
+            else{
+                this.setState({
+                    employmentData:result.data.data.list,
+                })
+            }
         }.bind(this));
 
-        axiosGet("/company/api/user/getCVinfo.do"+"?type=3",function(result){
+        axiosGet(data.GetCVinfo+"?type=3",function(result){
             this.setState({
                 employmentDataNum:result.data.data,
             })
@@ -409,7 +455,7 @@ export class ListViewExamplemid extends React.Component{
 
     showEmploymentData = (data) => {
         return data.map(item=>{
-            return <div className='rowbody'>
+            return <div className='rowbody' style={{paddingBottom:'20px'}}>
                 <div className='rowimg'><img src={'http://'+item.portrait}/></div>
                 <div className='rowtext'>
                     <div style={{height:'40px'}}>{item.name}<span style={{marginLeft:'20px'}}>{item.sex}</span></div>
@@ -447,13 +493,13 @@ export class ListViewExamplemid extends React.Component{
         }
 
 
-        console.log(startDateStr)
-        console.log(endDateStr)
-        console.log(Date.parse(this.state.startGraduateTime))
-        console.log(Date.parse(this.state.endGraduateTime))
-    axiosGet("/company/api/user/search.do"+"?type=3"+
+        // console.log(startDateStr)
+        // console.log(endDateStr)
+        // console.log(Date.parse(this.state.startGraduateTime))
+        // console.log(Date.parse(this.state.endGraduateTime))
+    axiosGet(data.Search+"?type=3"+
             (this.state.schoolValue==null?"":"&schoolId="+this.state.schoolValue)+
-            (this.state.provincesValue==null?"":"&userNativeplace="+this.state.provincesValue)+
+            (this.state.provincesValue==null?"":"&userNativeplace="+this.state.options.provinces[0][this.state.provincesValue[0].replace("\"","")-1].label)+
             (this.state.educationsValue==null?"":"&educationId="+this.state.educationsValue)+
             (this.state.specialsValue==null?"":"&specialId="+this.state.specialsValue)+
             (this.state.certificatesValue==null?"":"&certificateId="+this.state.certificatesValue)+
@@ -461,8 +507,9 @@ export class ListViewExamplemid extends React.Component{
             (startDateStr==null?"":"&userGraduatetimeStart="+startDateStr)+
             (endDateStr==null?"":"&userGraduatetimeEnd="+endDateStr)+
             (this.state.experiencesValue==null?"":"&experienceIdexperienceId="+this.state.experiencesValue)+
-            (this.state.goprovincesValue==null?"":"&intentioncity="+this.state.goprovincesValue)+
-            (this.state.intentionjobsValue==null?"":"&intentionjobId="+this.state.intentionjobsValue),function(result){
+            (this.state.goprovincesValue==null?"":"&intentioncity="+this.state.options.provinces[0][this.state.goprovincesValue[0].replace("\"","")-1].label)+
+            (this.state.intentionjobsValue==null?"":"&intentionjobId="+this.state.intentionjobsValue)+"&pageNum="+
+        this.state.EmploymentDatapageNum+"&pageSize="+this.state.EmploymentDatapageSize,function(result){
             if(result.data.status==0){
                 Toast.success(result.data.msg,2)
                 this.setState({
@@ -471,21 +518,34 @@ export class ListViewExamplemid extends React.Component{
             }
             else{
                 Toast.success("找到了"+result.data.data.list.length+"个结果",2)
-                this.setState({
-                    employmentData:result.data.data.list,
-                })
+                if(this.state.searchEmploymentData&&this.state.EmploymentDatapageNum>1){
+                    var nextData = result.data.data.list;
+                    var finshData = this.state.employmentData.concat(nextData)
+                    this.setState({
+                        employmentData:finshData,
+                    })
+                }
+                else{
+                    this.setState({
+                        searchEmploymentData:true,
+                        EmploymentDatapageNum:1,
+                        EmploymentDatapageSize:10,
+                        employmentData:result.data.data.list,
+                    })
+                }
             }
 
         }.bind(this));
     }
 
     searchSkillData = () =>{
-        axiosGet("/company/api/user/search.do"+"?type=2"+
+        axiosGet(data.Search+"?type=2"+
             (this.state.schoolValue==null?"":"&schoolId="+this.state.schoolValue)+
-            (this.state.provincesValue==null?"":"&userNativeplace="+this.state.provincesValue)+
+            (this.state.provincesValue==null?"":"&userNativeplace="+this.state.options.provinces[0][this.state.provincesValue[0].replace("\"","")-1].label)+
             (this.state.educationsValue==null?"":"&educationId="+this.state.educationsValue)+
             (this.state.specialsValue==null?"":"&specialId="+this.state.specialsValue)+
-            (this.state.specialtysValue==null?"":"&specialtyId="+this.state.specialtysValue),function(result){
+            (this.state.specialtysValue==null?"":"&specialtyId="+this.state.specialtysValue)+
+            "&pageNum="+this.state.SkillDatapageNum+"&pageSize="+this.state.SkillDatapageSize,function(result){
             if(result.data.status==0){
                 Toast.success(result.data.msg,2)
                 this.setState({
@@ -494,16 +554,29 @@ export class ListViewExamplemid extends React.Component{
             }
             else{
                 Toast.success("找到了"+result.data.data.list.length+"个结果",2)
-                this.setState({
-                    skillData:result.data.data.list,
-                })
+                if(this.state.searchSkillData&&this.state.SkillDatapageNum>1){
+                    var nextData = result.data.data.list;
+                    var finshData = this.state.skillData.concat(nextData)
+                    this.setState({
+                        skillData:finshData,
+                    })
+                }
+                else{
+                    this.setState({
+                        searchSkillData:true,
+                        SkillDatapageNum:1,
+                        SkillDatapageSize:10,
+                        skillData:result.data.data.list,
+                    })
+                }
+
             }
 
         }.bind(this));
     }
 
     searchPartData = () =>{
-        axiosGet("/company/api/user/searchParttime.do"+"?"+
+        axiosGet(data.SearchParttime+"?"+
             (this.state.schoolValue==null?"":"schoolId="+this.state.schoolValue)+
             (this.state.intentionparttimesValue==null?"":"&intentionparttimeIds="+this.state.intentionparttimesValue)+
             (this.state.parttimeaddrsValue==null?"":"&parttimeaddrIds="+this.state.parttimeaddrsValue)+
@@ -515,8 +588,11 @@ export class ListViewExamplemid extends React.Component{
                 })
             }
             else{
-                Toast.success("找到了"+result.data.data.list.length+"个结果",2)
+                Toast.success("已找到以下结果",2)
                 this.setState({
+                    searchPartData:true,
+                    PartDataNum:1,
+                    PartDatapageSize:10,
                     partData:result.data.data.list,
                 })
             }
@@ -543,6 +619,16 @@ export class ListViewExamplemid extends React.Component{
             endGraduateTime:null,
             goprovincesValue:null,
             intentionjobsValue:null,
+            //
+            PartDatapageNum:1,
+            PartDatapageSize:10,
+            searchPartData:false,
+            SkillDatapageNum:1,
+            SkillDatapageSize:10,
+            searchSkillData:false,
+            EmploymentDatapageNum:1,
+            EmploymentDatapageSize:10,
+            searchEmploymentData:false
         })
         this.getPartData(1,10);
         this.getSkillData(1,10);
@@ -567,7 +653,9 @@ export class ListViewExamplemid extends React.Component{
         window.location.href = "/downWorks/"+this.state.getindex;
     }
 
+
     render(){
+        console.log(this.state)
         return (
             <div>
                 <div className='indexTabs'>
@@ -581,7 +669,6 @@ export class ListViewExamplemid extends React.Component{
                                       index:index,
                                       getindex:index+1,
                                   })
-                                  console.log(this.state.index)
                               }}
                         >
                             <div style={{height: this.state.viewHeight, backgroundColor: '#fff'}}>
@@ -645,6 +732,27 @@ export class ListViewExamplemid extends React.Component{
                                 </div>
                                 <div className='tabonce' style={this.state.show?null:{paddingTop:'50px'}}>
                                     <div>{this.showPartData(this.state.partData)}</div>
+                                    <PullToRefresh
+                                        damping={60}
+                                        ref={el => this.ptr = el}
+                                        style={{
+                                            overflow: 'auto',
+                                        }}
+                                        indicator={this.state.down ? {} : { deactivate: '上拉可以刷新' }}
+                                        direction={'up'}
+                                        refreshing={this.state.refreshing}
+                                        onRefresh={() => {
+                                            var pageNum=this.state.PartDatapageNum+1
+                                            this.setState({ refreshing: true,PartDatapageNum:pageNum });
+                                            setTimeout(() => {
+                                                this.setState({ refreshing: false });
+                                            }, 1000);
+                                            this.getPartData();
+                                        }}
+                                    >
+
+                                        <div className='PullToRefreshup'>请在此处上拉加载更多</div>
+                                        </PullToRefresh>
                                 </div>
                             </div>
                             <div style={{justifyContent: 'center', height: this.state.viewHeight, backgroundColor: '#fff',flexWrap: 'wrap',flexDirection: 'row'}}>
@@ -675,8 +783,8 @@ export class ListViewExamplemid extends React.Component{
                                             title="籍贯"
                                             cascade={false}
                                             value={this.state.provincesValue}
-                                            onChange={v => this.setState({ provincesValue: v })}
-                                            onOk={v => this.setState({ provincesValue: v })}
+                                            onChange={v => this.setState({ provincesValue: v})}
+                                            onOk={v => this.setState({ provincesValue: v})}
                                         >
                                             <List.Item arrow="down">籍贯</List.Item>
                                         </Picker>
@@ -720,6 +828,27 @@ export class ListViewExamplemid extends React.Component{
                                 </div>
                                 <div className='tabonce' style={this.state.show?null:{paddingTop:'10px'}}>
                                     <div>{this.showSkillData(this.state.skillData)}</div>
+                                    <PullToRefresh
+                                        damping={60}
+                                        ref={el => this.ptr = el}
+                                        style={{
+                                            height:this.state.Height,
+                                            overflow: 'auto',
+                                        }}
+                                        indicator={this.state.down ? {} : { deactivate: '上拉可以刷新' }}
+                                        direction={'up'}
+                                        refreshing={this.state.refreshing}
+                                        onRefresh={() => {
+                                            var pageNum=this.state.SkillDatapageNum+1
+                                            this.setState({ refreshing: true,SkillDatapageNum:pageNum });
+                                            setTimeout(() => {
+                                                this.setState({ refreshing: false });
+                                            }, 1000);
+                                            {this.state.searchSkillData?this.searchSkillData():this.getSkillData()}
+                                        }}
+                                    >
+                                        <div className='PullToRefreshup'>请在此处上拉加载更多</div>
+                                    </PullToRefresh>
                                 </div>
 
                             </div>
@@ -870,7 +999,29 @@ export class ListViewExamplemid extends React.Component{
                                     </div>
                                 </div>
                                 <div className='tabonce' style={this.state.show?null:{paddingTop:'20px'}}>
+
                                     <div>{this.showEmploymentData(this.state.employmentData)}</div>
+                                    <PullToRefresh
+                                        damping={60}
+                                        ref={el => this.ptr = el}
+                                        style={{
+                                            height:this.state.Height,
+                                            overflow: 'auto',
+                                        }}
+                                        indicator={this.state.down ? {} : { deactivate: '上拉可以刷新' }}
+                                        direction={'up'}
+                                        refreshing={this.state.refreshing}
+                                        onRefresh={() => {
+                                            var pageNum=this.state.EmploymentDatapageNum+1
+                                            this.setState({ refreshing: true,EmploymentDatapageNum:pageNum });
+                                            setTimeout(() => {
+                                                this.setState({ refreshing: false });
+                                            }, 1000);
+                                            {this.state.searchEmploymentData?this.searchEmploymentData():this.getEmploymentData()}
+                                        }}
+                                    >
+                                        <div className='PullToRefreshup'>请在此处上拉加载更多</div>
+                                        </PullToRefresh>
                                 </div>
 
                             </div>
@@ -885,6 +1036,8 @@ export class ListViewExamplemid extends React.Component{
 
 export class ListViewExamplemhome extends React.Component{
 
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -892,6 +1045,9 @@ export class ListViewExamplemhome extends React.Component{
             selectedTab: 'redTab',
             hidden: false,
             viewHeight: null,
+            viewWidth: null,
+            fileList: [],
+            uri:null,
             showData:{
                 name:null,
                 phone:null,
@@ -903,9 +1059,10 @@ export class ListViewExamplemhome extends React.Component{
     }
 
     componentDidMount(){
+        var viewWidth = (document.documentElement.clientWidth-120)/2;
         var viewHeight = document.documentElement.clientHeight-95;
-        this.setState({viewHeight:viewHeight});
-        axiosGet("/company/api/user/get_info.do",function(result){
+        this.setState({viewHeight:viewHeight,viewWidth:viewWidth});
+        axiosGet(data.Get_info,function(result){
             if(result.data.status==10){
                 Toast.fail("您未登录,请先登录",2)
                 window.location.href='/login';
@@ -921,7 +1078,7 @@ export class ListViewExamplemhome extends React.Component{
         const alertInstance = alert('确认', '您确认退出吗？', [
             {text: '取消', onPress: () => console.log('cancel'), style: 'default'},
             {text: '确认', onPress: () => {
-                    axiosGet("/company/api/user/exit.do",function(result){
+                    axiosGet(data.Exit,function(result){
                         if(result.data.status==1){
                             Toast.success(result.data.data,2);
                         }
@@ -930,12 +1087,61 @@ export class ListViewExamplemhome extends React.Component{
                 }},
         ]);
     }
+    getMessage = () => {
+        window.location.href = "/message";
+    }
+
+    onChange=(info)=> {
+        if (info.file.status !== 'uploading') {
+        }
+        if (info.file.status === 'done') {
+            message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+        }
+    }
+    handleChange = ({fileList}) => {
+        if(fileList!=[]){
+        if(fileList[0].status=='done'){
+            this.setState({
+                uri:fileList[0].response.data.uri
+            })
+        }
+        }
+        this.setState({
+            fileList,
+        })
+
+    }
+    Input=()=>{
+        var uri={
+            file:this.state.uri
+        }
+        axiosPost(data.Chageportrait,uri,function (result){
+            if(result.data.status==1){
+                Toast.success("更换头像成功！请刷新界面！",2)
+                window.location.href = "/home";
+            }
+        })
+    }
+
 
     render(){
         return (
             <div className='homebody' style={{height:this.state.viewHeight}}>
-                <div className='homeimg'><img src="https://www.lezaixy.com/images/company/1.png"/></div>
+                <Upload
+                    action={data.Upload}
+                    onChange={this.handleChange}
+                    listType={'picture'}
+                    defaultFileList={this.state.fileList}
+                    className={'upload-list-inline'}
+                >
+                    <div className='homeimg'style={this.state.fileList.length >= 1 ? {display:'none'} :null}><img style={this.state.fileList.length >= 1 ? null :{marginLeft:this.state.viewWidth}} src={'http://'+this.state.showData.portrait}/></div>
+                </Upload>
+                <div>{this.state.fileList.length >= 1 ? <Button onClick={this.Input}>确认</Button> :null}</div>
                 <div className='homename'>{this.state.showData.name}</div>
+                <div>
+                </div>
                 <div className='homemessage'>
                     <div className='homessagenum'>
                         我的账号<span style={{float:'right'}}>{this.state.showData.phone}</span>
@@ -946,7 +1152,7 @@ export class ListViewExamplemhome extends React.Component{
                     <div className='homessagemodel'>
                         企业规模<span style={{float:'right'}}>{this.state.showData.sizeValue}</span>
                     </div>
-                    <div className='homessagemodel'>
+                    <div className='homessagemodel' onClick={this.getMessage}>
                         我的消息<span style={{float:'right'}}><img src='http://udaing-static.oss-cn-beijing.aliyuncs.com/tjmimg/more.png'/></span>
                     </div>
                 </div>

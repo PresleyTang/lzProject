@@ -10,6 +10,7 @@ import PersonalDetails from '../components/personalDetails';
 import SkillDataDetails from '../components/skillDataDetails';
 import EmploymentDataDetails from '../components/employmentDataDetails';
 import DownWorks from '../components/downWorks';
+import Message from '../components/message';
 
 const Article = () =>(
     <Switch>
@@ -40,6 +41,7 @@ export default class AppRouter extends React.Component {
             <Router basename="/">
                 <Switch>
                     <Route path="//" component={Login}></Route>
+                    <Route path="/message" component={Message}></Route>
                     <Route path="/login" component={Login}></Route>
                     <Route path="/forgetpassword" component={Forgetpassword}></Route>
                     <Route path="/registered" component={Registered}></Route>

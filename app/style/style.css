@@ -51,7 +51,7 @@
 .forgetInput{
     margin: 20px 10px;
 }
-.forgetInput a{
+.Inputa{
     position: absolute;
     right: 0;
     bottom: 15px;
@@ -110,7 +110,7 @@
 }
 .oncedata{
     margin: 4px auto;
-    height: 60px;
+    height: 70px;
     text-align: center;
 }
 .oncedatabody{
@@ -125,7 +125,7 @@
     margin-top: 6px;
 }
 .oncedatabodybottom{
-    margin-top: 2px;
+    margin-top: 6px;
 }
 /*index*/
 .tabtitle{
@@ -172,6 +172,7 @@
 .rowimg img{
     height: 100%;
     border-radius: 10px;
+    max-width: 62px;
 }
 .rowtext{
     width: calc(100% - 135px);
@@ -338,6 +339,8 @@
  }
 .forgettopleft img{
     width: 100%;
+    max-height: 160px;
+    max-width: 110px;
 }
 .forgettopright{
     display: inline-block;
@@ -397,4 +400,11 @@
     font-size: 16px;
     height: 22px;
     line-height: 22px;
+}
+.PullToRefreshup{
+    width: 100%;
+    padding: 20px 0 30px 0;
+    text-align: center;
+    font-size: 16px;
+    line-height: 10px;
 }

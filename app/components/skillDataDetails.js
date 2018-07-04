@@ -1,7 +1,7 @@
 import React from 'react'
 import { Icon , InputItem, NavBar ,Toast } from 'antd-mobile';
 import {axiosGet} from "../util/axios";
-
+import * as data from '../config/dataurl';
 
 export default class SkillDataDetails extends React.Component{
 
@@ -39,7 +39,7 @@ export default class SkillDataDetails extends React.Component{
 
     getSkillData = () =>{
         if(this.props.match.params.type==1){
-            axiosGet("/company/api/user/get_detail.do"+"?userId="+this.props.match.params.id+"&type=2",function(result){
+            axiosGet(data.Get_detail+"?userId="+this.props.match.params.id+"&type=2",function(result){
                 if(result.data.status==10){
                     Toast.fail("您未登录,请先登录",2)
                     window.location.href='/login';
@@ -50,7 +50,7 @@ export default class SkillDataDetails extends React.Component{
             }.bind(this));
         }
         else if(this.props.match.params.type==2){
-            axiosGet("/company/api/user/getused_detail"+"?userId="+this.props.match.params.id+"&type=2",function(result){
+            axiosGet(data.Getused_detail+"?userId="+this.props.match.params.id+"&type=2",function(result){
                 if(result.data.status==10){
                     Toast.fail("您未登录,请先登录",2)
                     window.location.href='/login';
@@ -106,7 +106,7 @@ export default class SkillDataDetails extends React.Component{
                 </div>
                 <div className='forgetInput'>
                     <div className='forgettop'>
-                        <div className='forgettopleft'><img src="http://udaing-static.oss-cn-beijing.aliyuncs.com/tjmimg/leizai.png"/></div>
+                        <div className='forgettopleft'><img src={'http://'+this.state.SkillData.photo}/></div>
                         <div className='forgettopright'>
                             <div className='forgettoponce'>
                                 <div className='forgettoponceleft'>姓名：</div>

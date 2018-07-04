@@ -29,11 +29,6 @@ export default class Index extends React.Component{
     render(){
         return (
             <div>
-                <div className='indexNavBar'>
-                <NavBar
-                        mode="dark"
-                    >主页</NavBar>
-                </div>
                 <div className='indexTabBar'>
                 <TabBar
                     unselectedTintColor="#949494"
@@ -65,7 +60,7 @@ export default class Index extends React.Component{
                         }}
                         data-seed="logId"
                     >
-                        <ListViewExample/>
+                        {this.state.selectedTab == "blueTab"?<ListViewExample/>:<div></div>}
                     </TabBar.Item>
                     <TabBar.Item
                         icon={
@@ -93,7 +88,7 @@ export default class Index extends React.Component{
                             this.props.history.push("/search");
                         }}
                     >
-                        <ListViewExamplemid Id={this.props.match.params.id}/>
+                        {this.state.selectedTab == "greenTab"?<ListViewExamplemid Id={this.props.match.params.id}/>:<div></div>}
                     </TabBar.Item>
                     <TabBar.Item
                         icon={{ uri: 'http://udaing-static.oss-cn-beijing.aliyuncs.com/tjmimg/home.png' }}
@@ -108,7 +103,7 @@ export default class Index extends React.Component{
                             this.props.history.push("/home");
                         }}
                     >
-                        <ListViewExamplemhome/>
+                        {this.state.selectedTab == "yellowTab"?<ListViewExamplemhome/>:null}
                     </TabBar.Item>
                 </TabBar>
                 </div>

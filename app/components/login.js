@@ -1,6 +1,7 @@
 import React from 'react'
 import {Toast,Button} from 'antd-mobile';
 import {axiosGet, axiosPost} from '../util/axios'
+import * as data from '../config/dataurl'
 export default class Login extends React.Component{
 
     constructor(props){
@@ -13,15 +14,15 @@ export default class Login extends React.Component{
 
 
     getIndex = () =>{
-        var data={
+        var Num={
             phone:this.state.phone,
             password:this.state.password,
         }
-        if(data.phone==null||data.password==null){
+        if(Num.phone==null||Num.password==null){
             Toast.fail("输入不能为空！",2)
         }
         else{
-        axiosPost("/company/api/user/login.do",data,function(result){
+        axiosPost(data.Login,Num,function(result){
             //console.log(result);
             if(result.data.status == 0){
                 Toast.success(result.data.msg,2);

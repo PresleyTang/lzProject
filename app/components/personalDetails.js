@@ -1,6 +1,7 @@
 import React from 'react'
 import { Icon , InputItem, NavBar ,Toast } from 'antd-mobile';
 import {axiosGet} from "../util/axios";
+import * as data from '../config/dataurl';
 
 
 export default class PersonalDetails extends React.Component{
@@ -28,7 +29,7 @@ export default class PersonalDetails extends React.Component{
 
     getPartData = () =>{
         if(this.props.match.params.type==1){
-            axiosGet("/company/api/user/get_detail.do"+"?userId="+this.props.match.params.id+"&type=1",function(result){
+            axiosGet(data.Get_detail+"?userId="+this.props.match.params.id+"&type=1",function(result){
                 if(result.data.status==10){
                     Toast.fail("您未登录,请先登录",2)
                     window.location.href='/login';
@@ -39,7 +40,7 @@ export default class PersonalDetails extends React.Component{
             }.bind(this));
         }
         else if(this.props.match.params.type==2){
-            axiosGet("/company/api/user/getused_detail"+"?userId="+this.props.match.params.id+"&type=1",function(result){
+            axiosGet(data.Getused_detail+"?userId="+this.props.match.params.id+"&type=1",function(result){
                 if(result.data.status==10){
                     Toast.fail("您未登录,请先登录",2)
                     window.location.href='/login';
